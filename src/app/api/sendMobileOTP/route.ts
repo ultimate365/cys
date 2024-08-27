@@ -22,21 +22,33 @@ export async function POST(request: NextRequest) {
         { status: 200 }
       );
     } else {
-      let mobileOtpdata = new PhoneOtp({
-        phone: phone,
-        code: mobileOtp,
-        expiresIn: new Date().getTime() + 300 * 1000,
-      });
+      let OTPData = await User.find({ phone });
+      if (OTPData.length > 2) {
+        // await PhoneOtp.deleteMany({ phone });
+        return NextResponse.json(
+          {
+            message: "Mobile Number Blocked, Contact Admin",
+            success: false,
+          },
+          { status: 200 }
+        );
+      } else {
+        let mobileOtpdata = new PhoneOtp({
+          phone: phone,
+          code: mobileOtp,
+          expiresIn: new Date().getTime() + 300 * 1000,
+        });
 
-      await sendOTPSMS(phone, mobileOtp);
-      await mobileOtpdata.save();
-      return NextResponse.json(
-        {
-          message: "OTP Sent, Please check your Mobile",
-          success: true,
-        },
-        { status: 200 }
-      );
+        await sendOTPSMS(phone, mobileOtp);
+        await mobileOtpdata.save();
+        return NextResponse.json(
+          {
+            message: "OTP Sent, Please check your Mobile",
+            success: true,
+          },
+          { status: 200 }
+        );
+      }
     }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
