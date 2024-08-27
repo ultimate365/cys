@@ -1,4 +1,3 @@
-import Member from "../../../models/member";
 import dbConnect from "../../../lib/dbConnect";
 import User from "../../../models/user";
 import { NextRequest, NextResponse } from "next/server";
@@ -29,17 +28,9 @@ export async function POST(request: NextRequest) {
       role,
       isVerified,
     });
-    const newMember = new Member({
-      name,
-      fname,
-      phone,
-      id,
-      role,
-      isRegistered,
-      isVerified,
-    });
+
     await newUser.save();
-    await newMember.save();
+
     return NextResponse.json(
       {
         message:
