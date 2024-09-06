@@ -2,6 +2,7 @@ import dbConnect from "../../../lib/dbConnect";
 import { NextRequest, NextResponse } from "next/server";
 import User from "../../../models/user";
 import Member from "../../../models/member";
+import { SendCustomSMS } from "@/helpers/SendCustomSMS";
 dbConnect();
 export async function POST(request: NextRequest) {
   try {
@@ -41,6 +42,8 @@ export async function POST(request: NextRequest) {
       Oct25,
       Nov25,
       Dec25,
+      months,
+      amount,
     }: any = reqBody;
 
     let MemberData = await Member.findOne({ phone: phone });
@@ -81,13 +84,8 @@ export async function POST(request: NextRequest) {
       MemberData.Dec25 = Dec25;
 
       await MemberData.save();
-      let userData = await User.findOne({ phone: phone });
-      if (userData) {
-        userData.name = name;
-        userData.phone = phone;
-        userData.role = role;
-        await userData.save();
-      }
+      const message = `Dear ${name},\nThank you for making payment of Rs. ${amount} for Membership of ${months} months.\n-CYS`;
+      await SendCustomSMS(phone, message);
       return NextResponse.json(
         {
           message: "User Updated Successfully",

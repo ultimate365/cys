@@ -41,3 +41,4 @@ constants.js
 .env
 /files/
 /db/
+test.js

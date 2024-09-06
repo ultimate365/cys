@@ -7,15 +7,15 @@ dbConnect();
 export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
-    const { name, phone, gp, address }: any = reqBody;
+    const { name, fname, phone }: any = reqBody;
 
     let MemberData = await Teacher.findOne({ phone: phone });
 
     if (MemberData) {
       MemberData.name = name;
-      MemberData.gp = gp;
+      MemberData.fname = fname;
       MemberData.phone = phone;
-      MemberData.address = address;
+
       await MemberData.save();
 
       let userData = await User.findOne({ phone: phone });
